@@ -225,12 +225,13 @@ Password: *testpassword*
 This username and password combination was set in the override.yaml under apiServer, so user access can be customized.
 
 
-<img width="1231" alt="Screenshot 2023-11-22 at 10 20 22 AM" src="https://github.com/kaitlynabdo/clearml-blog/assets/45447032/9e9ba663-da3f-43eb-a87f-123ab7c035da">
+<img width="1231" alt="Screenshot 2023-11-22 at 10 20 22 AM" src="https://github.com/kaitlynabdo/clearml-blog/assets/45447032/9e9ba663-da3f-43eb-a87f-123ab7c035da"> <br />
 
 
-Once you have logged in, you will reach the ClearML dashboard.
+Once you have logged in, you will reach the ClearML dashboard. <br />
 
-<img width="1223" alt="Screenshot 2023-11-22 at 10 22 46 AM" src="https://github.com/kaitlynabdo/clearml-blog/assets/45447032/5f3abd3d-6e28-4953-8852-eaa776376690">
+<img width="1223" alt="Screenshot 2023-11-22 at 10 22 46 AM" src="https://github.com/kaitlynabdo/clearml-blog/assets/45447032/5f3abd3d-6e28-4953-8852-eaa776376690"> <br />
+
 
 
 That's a wrap! Now you know how to deploy ClearML on your OpenShift cluster. Now you can try out the features and capabilities with some [examples](https://clear.ml/docs/latest/docs/guides/) with the sample content in ClearML to
