@@ -34,9 +34,9 @@ As the demand for artificial intelligence (AI) and its intelligent applications 
 
 Before we begin, we'll make a new directory called clearml and move into it to keep this walkthrough organized. We will also set a *WILDCARD* variable with a wildcard URL. *Example: apps.ocp4.example.com*
 ```
-$ mkdir clearml
-$ cd clearml
-$ export WILDCARD=<YOUR_OPENSHIFT_WILDCARD_APP_URL>
+mkdir clearml
+cd clearml
+export WILDCARD=<YOUR_OPENSHIFT_WILDCARD_APP_URL>
 ```
 
 This above *WILDCARD* variable will be used later when we setup our Helm overrides configuration.
@@ -47,14 +47,18 @@ We can deploy ClearML Enterprise via helm on our OpenShift cluster. With the cre
 
 
 ```
-$ helm repo add allegroai-enterprise <CLEAR_ML_HELM_CHART_URL> --username <YOUR_USERNAME> --password <YOUR_PASSWORD>
-
+helm repo add allegroai-enterprise <CLEAR_ML_HELM_CHART_URL> --username <YOUR_USERNAME> --password <YOUR_PASSWORD>
+```
+```
 "allegroai-enterprise" has been added to your repositories
 ```
 
-```
-$ helm repo update
+After we add our repository, we'll update helm to ensure it's up to date. 
 
+```
+helm repo update
+```
+```
 Hang tight while we grab the latest from your chart repositories...
 ...Successfully got an update from the "allegroai-enterprise" chart repository
 Update Complete. ⎈Happy Helming!⎈
@@ -63,8 +67,9 @@ Update Complete. ⎈Happy Helming!⎈
 Now that we have our repository, let's create a new project for ClearML in our OpenShift Cluster.
 
 ```
-$ oc new-project clearml
-
+oc new-project clearml
+```
+```
 Now using project "clearml" on server.
 You can add applications to this project with the 'new-app' command. For example, try:
     oc new-app rails-postgresql-example
@@ -74,7 +79,7 @@ to build a new example application in Ruby. Or use kubectl to deploy a simple Ku
 
 Create a file called *override.yml* with the following information to override the default configurations in our OpenShift cluster with our own. You will need image credentials to access the ClearML private docker registry and insert that password under *imageCredentials*.
 ```
-$ cat <<EOF >> /tmp/override.yaml
+cat <<EOF >> /tmp/override.yaml
 imageCredentials:
   password: "<CLEARML_PRIV_REGISTRY_CREDENTIALS>"
 
@@ -158,11 +163,11 @@ EOF
 We need to change the security context constraints for some of our users. Currently, we need to allow broader permissions to deploy ClearML Enterprise, so we'll allow anyuid and privileged permissions to the following users. ClearML does have a non root option for security, but due to a bug in helm at the time of this blog, we had to allow broader permissions.
 
 ```
-$ oc adm policy add-scc-to-user anyuid -z clearml-apiserver
-$ oc adm policy add-scc-to-user anyuid -z clearml-enterprise-mongodb
-$ oc adm policy add-scc-to-user anyuid -z clearml-enterprise-redis
-$ oc adm policy add-scc-to-user anyuid -z default
-$ oc adm policy add-scc-to-user privileged -z clearml-elastic
+oc adm policy add-scc-to-user anyuid -z clearml-apiserver
+oc adm policy add-scc-to-user anyuid -z clearml-enterprise-mongodb
+oc adm policy add-scc-to-user anyuid -z clearml-enterprise-redis
+oc adm policy add-scc-to-user anyuid -z default
+oc adm policy add-scc-to-user privileged -z clearml-elastic
 ```
 ```
 clusterrole.rbac.authorization.k8s.io/system:openshift:scc:anyuid added: "clearml-apiserver"
@@ -175,8 +180,9 @@ clusterrole.rbac.authorization.k8s.io/system:openshift:scc:privileged added: "cl
 Finally, we are now able to deploy the helm chart to our cluster with the custom configurations we made with *override.yaml*. It should take about 5 minutes for the helm chart to install and deploy, but many vary depending on your environment's resources.
 
 ```
-$ helm install clearml-enterprise allegroai-enterprise/clearml-enterprise -f /tmp/override.yaml
-
+helm install clearml-enterprise allegroai-enterprise/clearml-enterprise -f /tmp/override.yaml
+```
+```
 NAME: clearml-enterprise
 LAST DEPLOYED: Wed Nov 22 10:13:26 2023
 NAMESPACE: clearml
@@ -194,9 +200,9 @@ Accessing Route to ClearML Enterprise Dashboard
 Now that we have finally deployed the helm chart, we can ClearML Enterprise. To do so, we need to access the route to our ClearML web server. To do so, we need to first expose the API server, web server, and file server.
 
 ```
-$ oc expose svc clearml-enterprise-apiserver
-$ oc expose svc clearml-enterprise-webserver
-$ oc expose svc clearml-enterprise-fileserver
+oc expose svc clearml-enterprise-apiserver
+oc expose svc clearml-enterprise-webserver
+oc expose svc clearml-enterprise-fileserver
 ```
 ```
 route.route.openshift.io/clearml-enterprise-apiserver exposed
@@ -207,8 +213,9 @@ route.route.openshift.io/clearml-enterprise-fileserver exposed
 To access the web server address, we need to view the routes we just exposed. Copy and paste the web server address into your internet browser.
 
 ```
-$ oc get routes
-
+oc get routes
+```
+```
 clearml-enterprise-apiserver    clearml-enterprise-apiserver-clearml.apps.ocp4.example.com         clearml-enterprise-apiserver    8008                 None
 clearml-enterprise-fileserver   clearml-enterprise-fileserver-clearml.apps.ocp4.example.com         clearml-enterprise-fileserver   8081                 None
 clearml-enterprise-webserver    clearml-enterprise-webserver-clearml.apps.ocp4.example.com           clearml-enterprise-webserver    8080                 None
@@ -233,15 +240,10 @@ Once you have logged in, you will reach the ClearML dashboard. <br />
 <img width="1223" alt="Screenshot 2023-11-22 at 10 22 46 AM" src="https://github.com/kaitlynabdo/clearml-blog/assets/45447032/5f3abd3d-6e28-4953-8852-eaa776376690"> <br />
 
 
-
 That's a wrap! Now you know how to deploy ClearML on your OpenShift cluster. Now you can try out the features and capabilities with some [examples](https://clear.ml/docs/latest/docs/guides/) with the sample content in ClearML to
 
 If you would like to try out OpenShift, you can with our [Developer Sandbox](https://developers.redhat.com/developer-sandbox) using a free trial. For more information on OpenShift and our AI initiatives, and ClearML, please visit the following pages:
-
 -   [OpenShift](https://www.redhat.com/en/technologies/cloud-computing/openshift)
-
 -   [OpenShift AI](https://www.redhat.com/en/technologies/cloud-computing/openshift/openshift-ai)
-
 -   [ClearML Guide to OpenShift](https://cloud.redhat.com/blog/a-guide-to-clearml-on-openshift)
-
 -   [ClearML Documentation](https://clear.ml/docs/latest/)
